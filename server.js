@@ -148,4 +148,27 @@ server.post('/shopping-cart/:customerId', (request, response) => {
     );
 });
 
+server.get('/shopping-cart/:customerId/:productId', (request, response) => {
+  const customerId = request.params.customerId;
+  const productId = request.params.productId;
+
+  ShoppingCart.find({ customerId })
+    .then((shoppingCart) => {
+      Product.findById(productId).then((product) => {
+        const updatedShoppingCart = {
+          firstName: shoppingCart.firstName,
+          lastName: shoppingCart.lastName,
+          customerId: shoppingCart.customerId,
+          products: [...shoppingCart.products, product],
+          totalPrice: 0,
+        };
+
+        /* ShoppingCart.findOneAndUpdate({ customerId }, updatedShoppingCart, {
+        new: true,
+      }).then((shoppingCart) => response.json(shoppingCart)); */
+      });
+    })
+    .then(() => response.json(updatedShoppingCart));
+});
+
 server.listen(4000, () => console.log('Server started'));
